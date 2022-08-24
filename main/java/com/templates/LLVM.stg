@@ -1,0 +1,293 @@
+group LLVM;
+
+// ZAKLAD PROGRAMU V LLVM MEDZIKODE: 
+init(code) ::= <<
+declare i32 @print_int(i32)
+declare i32 @print_char(i8)
+declare i32 @read_int()
+declare i8 @read_char()
+
+define i32 @main() {
+start:
+<code>
+ret i32 0
+}
+>>
+
+// VYPISANIE CISLA:
+OutputInt(compute_value, value_register) ::= <<
+<compute_value>
+call i32 @print_int(i32 <value_register>)
+>>
+
+// VYPISANIE CHARAKTERU:
+OutputChar(compute_value, sizeofvalue, value_register) ::= <<
+<compute_value>
+call i32 @print_char(i8 <value_register>)
+>>
+
+// ULOZENIE ARITMETICKEHO VYRAZU DO PREMENNEJ/POLA:
+AssignmentMath(compute_value, value_register, index_register, code, isArray, isNotArray) ::= <<
+<compute_value>
+<if (isArray)>
+<code>
+store i32 <value_register>, i32* <index_register>
+<endif>
+<if (isNotArray)>
+store i32 <value_register>, i32* <code>
+<endif>
+
+
+>>
+
+// PREMENNE POLE:
+VariableArray(dimensions_compute) ::= <<
+<dimensions_compute>
+>>
+
+// PREMENNE POLE:
+VariableCharArrayInLogic(dimensions_compute, load_register, memory_register) ::= <<
+<dimensions_compute>
+<load_register> = load i8, i8* <memory_register>
+>>
+
+// VELKOST POLA
+Dimensions(dimsize, dimsize_reg, ret_register) ::=<<
+<dimsize>
+>>
+
+// ULOZENIE VYRAZU DO PREMENNEJ:
+AssignmentVarToVar(new_register, memory_register0, memory_register1) ::= <<
+<new_register> = load i32, i32* <memory_register1>
+store i32 <new_register>, i32* <memory_register0>
+>>
+
+// ULOZENIE VSTUPNEHO CISLA DO PREMENNEJ:
+AssignmentInpInt(value_register, index_register, code, isArray, isNotArray) ::= <<
+<value_register> = call i32 @read_int()
+<if (isArray)>
+<code>
+store i32 <value_register>, i32* <index_register>
+<endif>
+<if (isNotArray)>
+store i32 <value_register>, i32* <code>
+<endif>
+>>
+
+// ULOZENIE VSTUPNEHO CHARAKTERU DO PREMENNEJ:
+AssignmentInpChar(value_register, code, index_register, isArray, isNotArray) ::= <<
+<value_register> = call i8 @read_char()
+<if (isArray)>
+<code>
+store i8 <value_register>, i8* <index_register>
+<endif>
+<if (isNotArray)>
+store i8 <value_register>, i8* <code>
+<endif>
+>>
+
+// ULOZENIE VSTUPNEHO CHARAKTERU DO PREMENNEJ:
+AssignmentChar(compute_value, value_register, code, index_register, isArray, isNotArray) ::= <<
+<compute_value>
+<if (isArray)>
+<code>
+store i8 <value_register>, i8* <index_register>
+<endif>
+<if (isNotArray)>
+store i8 <value_register>, i8* <code>
+<endif>
+>>
+
+// ULOZENIE VSTUPNEHO CHARAKTERU DO PREMENNEJ:
+AssignmentCharConst(compute_value, value_register, memory_register, pointer_register) ::= <<
+<value_register> = add i8 <value>, 0
+<pointer_register> = getelementptr i8, i8* <memory_register>
+store i8 <value_register>, i8* <pointer_register>
+>>
+
+// PRIRADENIE FUNKCIE
+AssignmentExpCtxFunc(compute_value, value_register, memory_register, allocate) ::= <<
+<compute_value>
+<if(allocate)><memory_register> = alloca i32<endif>
+store i32 <value_register>, i32* <memory_register>
+>>
+
+// ULOZENIE VYRAZU DO PREMENNEJ:
+AssignmentLog(compute_value, value_register, memory_register, allocate) ::= <<
+<compute_value>
+<if(allocate)><memory_register> = alloca i1<endif>
+store i1 <value_register>, i1* <memory_register>
+>>
+
+// PODMIENKY:
+IfStatement(compute_value1, value1_register, cmp_register, relation, if_true, if_false, label_id) ::= <<
+<compute_value1>
+br i1 <value1_register>, label %iftrue<label_id>, label %iffalse<label_id>
+iftrue<label_id>:
+<if_true>
+br label %fi<label_id>
+iffalse<label_id>:
+<if_false>
+br label %fi<label_id>
+fi<label_id>:
+>>
+
+// DEKLARACIA FUNKCIE
+FunctionDeclaration(code) ::= <<
+<code>
+>>
+
+// CHARACTER VARIABLE
+CharVar(memory_register, return_register) ::= <<
+<return_register> = load i8, i8* <memory_register>
+>>
+
+// CHARACTER CONSTANT:
+CharConst(const_value, return_register) ::= <<
+<return_register> = add i8 <const_value>, 0
+>>
+
+// RETURN VO FUNKCII
+Return(expr, expr_register) ::=<<
+<expr>
+ret i32 <expr_register>
+>>
+
+// ZOZNAM PARAMETROV
+ParameterList(code) ::= <<
+<code>
+>>
+
+// VNUTRO IF A ELSE BLOKU
+Statements(code) ::= <<
+<code>
+>>
+
+// WHILE CYCLE
+WhileStatement(condition, cond_register, cycle_body, label_id) ::= <<
+br label %cycle<label_id>
+cycle<label_id>:
+<condition>
+br i1 <cond_register>, label %iftrue<label_id>, label %fi<label_id>
+iftrue<label_id>:
+<cycle_body>
+br label %cycle<label_id>
+fi<label_id>:
+>>
+
+// DEKLARACIA PREMENNEJ INT:
+VariableDeclarationInteger(memory_register, allocate) ::= <<
+<if(allocate)><memory_register> = alloca i32<endif>
+>>
+
+// DEKLARACIA POLA INT:
+VariableDeclarationIntegerArray(code, dim_alloc, memory_register) ::= << 
+<code>
+<memory_register> = alloca i32, i32 <dim_alloc>
+>>
+
+// DEKLARACIA PREMENNEJ BOOL:
+VariableDeclarationBoolean(memory_register, allocate) ::= <<
+<if(allocate)><memory_register> = alloca i1<endif>
+>>
+
+// DEKLARACIA PREMENNEJ BOOL:
+VariableDeclarationBoolArray(code, dim_alloc, memory_register) ::= <<
+<code>
+<memory_register> = alloca i1, i32 <dim_alloc>
+>>
+
+// DEKLARACIA PREMENNEJ CHAR:
+VariableDeclarationChar(memory_register) ::= <<
+<memory_register> = alloca i8
+>>
+
+// DEKLARACIA PREMENNEJ CHAR:
+VariableDeclarationCharArray(code, dim_alloc, memory_register) ::= <<
+<code>
+<memory_register> = alloca i8, i32 <dim_alloc>
+>>
+
+// ARITMETICKE OPERACIE:
+MathOp(compute_left, left_register, compute_right, right_register, return_register, instruction) ::= <<
+<compute_left>
+<compute_right>
+<return_register> = <instruction> i32 <left_register>, <right_register>
+>>
+
+// POROVNAVACIE OPERACIE
+GLEoperations(compute_left, left_register, compute_right, right_register, return_register, relation) ::= <<
+<compute_left>
+<compute_right>
+<return_register> = icmp <relation> i32 <left_register>, <right_register>
+>>
+
+// POROVNAVACIE OPERACIE
+CharGLEoperations(compute_left, left_register, compute_right, right_register, return_register, relation) ::= <<
+<compute_left>
+<compute_right>
+<return_register> = icmp <relation> i8 <left_register>, <right_register>
+>>
+
+// OR
+OpOr(compute_left, left_register, compute_right, right_register, return_register, instruction) ::= <<
+<compute_left>
+<compute_right>
+<return_register> = <instruction> i1 <left_register>, <right_register>
+>>
+
+// AND
+OpAnd(compute_left, left_register, compute_right, right_register, return_register, instruction) ::= <<
+<compute_left>
+<compute_right>
+<return_register> = <instruction> i1 <left_register>, <right_register>
+>>
+
+// UNARNE MINUS PRED ZATVORKOU:
+NegParen(compute_value, value_register, return_register) ::= <<
+<compute_value>
+<return_register> = mul i32 <value_register>, -1 
+>>
+
+// CISLA BEZ MINUSU:
+Number(const_value, return_register) ::= <<
+<return_register> = add i32 <const_value>, 0
+>>
+
+// BOOL KONSTANTA:
+Boolean(const_value, return_register) ::= <<
+<return_register> = add i1 <const_value>, 0
+>>
+
+// VOLANIE FUNKCIE
+Function(memory_register, args) ::=<<
+<memory_register> = call @<args>
+>>
+
+// PREMENNE BEZ MINUSU:
+Variable(memory_register, return_register, undefined) ::= <<
+<if(undefined)><return_register> = add i32 0, 0
+<else><return_register> = load i32, i32* <memory_register>
+<endif>
+>>
+
+// LOGICKE PREMENNE
+BoolVariable(memory_register, return_register, undefined) ::= <<
+<if(undefined)><return_register> = add i1 0, 0
+<else><return_register> = load i1, i1* <memory_register>
+<endif>
+>>
+
+// NEGACIA VYRAZU
+OpNeg(compute_value, value_register, return_register) ::= <<
+<compute_value>
+<return_register> = xor i1 <value_register>, 1
+>>
+
+// PREMENNE S MINUSOM:
+NegIdentifier(memory_register, aux_register, return_register, undefined) ::= <<
+<if(undefined)><return_register> = add i32 0, 0
+<else><aux_register> = load i32, i32* <memory_register>
+<return_register> = mul i32 <aux_register>, -1
+<endif>
+>>

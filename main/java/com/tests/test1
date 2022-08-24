@@ -1,0 +1,19 @@
+$ HĽADANIE MAXIMA
+
+int n;
+n <- readint();
+int maximum;
+if (n>0){
+    maximum <- readint();
+} else {}
+int counter;
+counter <- 0;
+while(counter < n-1){
+    int newnumber;
+    newnumber <- readint();
+    if (newnumber > maximum){
+        maximum <- newnumber;
+    } else{}
+    counter <- counter+1;
+}
+writeint(maximum);

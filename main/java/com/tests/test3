@@ -1,0 +1,43 @@
+$ NAJKRATŠIE CESTY V GRAFE
+
+int n;
+n <- readint();
+int pole[n][n];
+int i;
+i <- 0;
+int j;
+while (i<n){
+    j <- 0;
+    while (j<n){
+        pole[i][j] <- readint();
+        j <- j+1;
+    }
+    i <- i+1;
+}
+int k;
+k <- 0;
+i <- 0;
+j <- 0;
+while(k<n){
+    while(i<n){
+        while(j<n){
+            if (pole[i][j]>pole[i][k]+pole[k][j] and !(pole[i][k]=-1) and !(pole[k][j]=-1)){
+                pole[i][j] <- pole[i][k]+pole[k][j];
+            }else{}
+            j <- j+1;
+        }
+        i <- i+1;
+    }
+    k <- k+1;
+}
+i <- 0;
+while(i<n){
+    j <- 0;
+    while(j<n){
+        writeint(pole[i][j]);
+        writechar(' ');
+        j <- j+1;
+    }
+    writechar('\n');
+    i <- i+1;
+}

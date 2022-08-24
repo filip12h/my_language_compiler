@@ -1,0 +1,250 @@
+Špecifikácia jazyka na projekt k predmetu Kompilátory
+
+Podporované typy:
+    - celé čísla - int
+    - znaky - char
+    	- ohraničený jednoitým apostrofom - napr. 'a'
+    - logické hodnoty - bool
+        - true - pravda
+        - false - nepravda
+
+Každý jednoduchý príkaz musí byť ukončený bodkočiarkou ; (do toho patrí deklarácia premennej, priradenie, štandardné I/O. Nepatrí do toho podmienka if, while, definícia funkcie) 
+        
+Komenty
+    - riadky začínajúce dolárom $ sa nevykonajú
+    - 2 doláre hneď za sebou označujú začiatok (v prípade že nepárny výskyt), príp.koniec(v prípade že párny výskyt) úseku ktorý sa nevykoná
+        
+Premenné
+    - deklarované v poradí *typ* *nazov_premennej*, napr. int premenna
+    - najprv treba deklarovať a až následne inicializovať (nie naraz) Po tom je možné s premennou pracovať
+    - meno bude musieť začínať písmenom(odporúčané malým), inak môže obsahovať aj čísla
+
+Operátory
+binárne
+    - priradenie hodnoty do premennej pomocou šípky doľava <-
+        - n <- 5
+            - do premennej n sme priradili hodnotu 5
+        - dvojznačnosť možná, napr. n<-5 by mohlo znamenať aj porovnanie n so záporným číslom, ale je to priradenie
+            - avšak vzhľadom na kontext by to nemalo robiť problém
+                - porovnanie výrazov mimo podmienok nemá význam a priradenie v podmienke je zakázané
+        - pri charakterových premenných treba začiatok pravej strany označiť ako (char)
+            - znak <-(char) 'a'
+    - aritmetické - výsledkom operácie je celé číslo
+        - sčítanie dvoch celých čísel +
+        - odčítanie dvoch celých čísel -
+        - násobenie dvoch celých čísel *
+        - celočíselné delenie dvoch celých čísel /
+    - logické - výsledkom operácie je true alebo false
+        - porovnávanie dvoch celých čísel <, <=, >, >=, =
+        - pre porovnanie 2 znakov sa používajú tie isté operátory, avšak začiatok pravej strany výrazu treba označiť ako (char)
+            - 'a'<(char)'b';
+            - !(znak=(char)'\n')
+        - logický súčet dvojice bool - or
+        - logický súčin dvojice bool - and
+unárne
+    - záporná hodnota celého čísla pomocou pomlčky/mínus -
+        - operátor sa nachádza priamo pred číslom alebo pred zátvorkou, ktorej výsledkom je číslo
+    - negácia logického výrazu pomocou výkričníka !
+        - logický výraz môže byť ohraničený okrúhlymi zátvorkami a negácia výrazu pred ľavou zátvorkou
+            - kontrola či sa a nerovná 47
+                if (!(a=47)){
+                    $kód
+                }else{}
+        - je možné negovať aj konštanty
+            - !true
+
+Polia
+    - podobne ako pri premenných
+    - sú podporované všetky typy premenných
+    - pri definícii treba určiť veľkosť a typ - pole môže obsahovať iba jeden typ premenných. Používajú sa hranaté zátvorky []
+        - definícia poľa bool veľkosti dvanásť
+            - bool pole[12]
+    - viacrozmerné pole definované pomocou viacerých dvojíc zátvoriek - pre každý rozmer jedna dvojica
+        - definícia trojrozmerného poľa znakov s veľkosťami rozmerov 2, n a 7
+            - char pole[2][n][7]
+    - polia indexujeme od nuly
+    - priradenie do poľa
+        - v poli s n dimenziami treba určiť pozíciu n parametrami - i-ty parameter hovorí o pozícií v i-tej dimenzii
+            - pole[1][0][0] <- 'k'
+                - tento príkaz priradí reťazec 'krabica' do poľa na miesto 1,0,0
+
+While cyklus
+    - jediný podporovaný cyklus v tomto jazyku
+    - štruktúra
+        - while(podmienka){
+                ...
+                $kód
+                ...
+        }
+    - podmienka je v okrúhlych zátvorkách () a má tvar logického výrazu
+    - kód je ohraničený v kučeravých zátvorkách {}
+    - na konci úseku s kódom sa overí či podmienka stále platí, ak áno, kód sa vykoná opäť, ak nie, program pokračuje v riadku pod úsekom s kódom
+
+Podmienky
+    - štruktúra - podobná ako while
+        - kľúčové slovo if nasledujúce okrúhlymi zátvorkami v ktorých sa nachádza podmienka, následne sa nachádza úsek s kódom v kučeravých zátvorkách
+        - po úseku s kódom sa povinne nachádza druhé kľúčové slovo else, po ktorom sa opäť nachádza dvojica kučeravých zátvoriek s kódom. Úseky s kódom môžu byť prázdne.
+        - kód za podmienkou sa vykoná v prípade že platí. Ak podmienka neplatí, vykoná sa kód za else.
+            - if(podmienka){
+                $kód
+            } else { $kód }
+
+~~~~~TODO~~~~~ zatiaľ neimplementované 
+Funkcie
+    - každá funkcia má nejaký typ, takýto typ je výsledkom funkcie
+    - ak má funkcia vracať pole určitého typu, pred menom funkcie je to patrične znázornené
+        - int funkcia[](){
+            int pole[];
+            $kód
+            return pole;
+        }
+            - táto funkcia vracia pole integerov
+    - tiež má(môže mať) nejaké vstupné premenné, tie má definované spolu s ich typom v okrúhlych zátvorkách
+    - kód funkcie sa nachádza v kučeravých zátvorkách a je ukončený kľúčovým slovom return a hodnotou, ktorú má funkcia vrátiť ako svoj výstup do volajúceho programu
+    - Štruktúra
+        typ názov(typ parameter1, typ parameter2, ..., typ parametern){
+            $kód
+            return ...
+        }
+    - Volanie funkcie
+        - menofunkcie(hodnota1, hodnota2, ..., hodnotan)
+        - vstupné parametre musia typovo sedieť s definíciou funkcie
+
+- Štandardný vstup
+    - kľúčové slovo readint()
+        - prečíta integer zo vstupu
+    - kľúčové slovo readchar()
+        - prečíta znak zo vstupu
+- Štandardný výstup
+    - kľúčové slovo writeint(int mathexp)
+        - argument je matematický výraz
+	- writechar(char c)
+        - argumentom je znak ohraničený ' (napr. 'a')
+
+        
+        
+-------------------------------------------------------------------------------
+$ HĽADANIE MAXIMA
+
+int n;
+n <- readint();
+int maximum;
+if (n>0){
+    maximum <- readint();
+} else {}
+int counter;
+counter <- 0;
+while(counter < n-1){
+    int newnumber;
+    newnumber <- readint();
+    if (newnumber > maximum){
+        maximum <- newnumber;
+    } else{}
+    counter <- counter+1;
+}
+writeint(maximum);
+
+-------------------------------------------------------------------------------
+$ LEXIKOGRAFICKÉ UTRIEDENIE
+
+int n;
+n <- readint();
+char pole[n][100]; $max.dlzka retazca je 100
+int counter;
+counter <- 0;
+int i;
+char znak;
+znak <- readchar(); $precitanie koncu riadku po nacitani znaku
+
+
+while (counter<n){
+    i <- 0;
+    znak <-(char) 'a';
+
+    while (i < 100 and !(znak=(char)'\n')){
+        znak <- readchar();
+        pole[counter][i] <-(char)znak;
+        i <- i+1;
+    }
+    int newcounter;
+    newcounter <- counter;
+    while (newcounter>0){
+        i <- 0;
+        while (pole[newcounter][i]=(char)pole[newcounter-1][i]){
+            i <- i + 1;
+        }
+        if (pole[newcounter][i]<(char)pole[newcounter-1][i]){
+            char docasne[100];
+            int j;
+            j <- 0;
+            while (j < 100){
+                docasne[j] <- (char)pole[newcounter][j];
+                pole[newcounter][j] <- (char)pole[newcounter-1][j];
+                pole[newcounter-1][j] <- (char)docasne[j];
+                j <- j + 1;
+            }
+            newcounter <- newcounter - 1; 
+        } else {
+            newcounter <- 0; $pokiaľ je to utriedené, tak už nebudeme zbytočne pokračovať v cykle
+            i <- 100;
+        }
+    }
+    counter <- counter+1;
+}
+
+
+counter <- 0;
+while (counter<n){
+    i <- 0;
+    while (i < 100 and !(pole[counter][i]=(char)'\n')){
+        writechar(pole[counter][i]);
+        i <- i + 1;
+    }
+    writechar('\n');
+    counter <- counter + 1;
+}
+
+------------------------------------------------------------------------------
+$ NAJKRATŠIE CESTY V GRAFE
+
+int n;
+n <- readint();
+int pole[n][n];
+int i;
+i <- 0;
+int j;
+while (i<n){
+    j <- 0;
+    while (j<n){
+        pole[i][j] <- readint();
+        j <- j+1;
+    }
+    i <- i+1;
+}
+int k;
+k <- 0;
+i <- 0;
+j <- 0;
+while(k<n){
+    while(i<n){
+        while(j<n){
+            if (pole[i][j]>pole[i][k]+pole[k][j] and !(pole[i][k]=-1) and !(pole[k][j]=-1)){
+                pole[i][j] <- pole[i][k]+pole[k][j];
+            }else{}
+            j <- j+1;
+        }
+        i <- i+1;
+    }
+    k <- k+1;
+}
+i <- 0;
+while(i<n){
+    j <- 0;
+    while(j<n){
+        writeint(pole[i][j]);
+        writechar(' ');
+        j <- j+1;
+    }
+    writechar('\n');
+    i <- i+1;
+}

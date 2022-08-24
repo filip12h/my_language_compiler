@@ -1,0 +1,58 @@
+$ LEXIKOGRAFICKÉ UTRIEDENIE
+
+int n;
+n <- readint();
+char pole[n][100]; $max.dlzka retazca je 100
+int counter;
+counter <- 0;
+int i;
+char znak;
+znak <- readchar(); $precitanie koncu riadku po nacitani znaku
+
+
+while (counter<n){
+    i <- 0;
+    znak <-(char) 'a';
+
+    while (i < 100 and !(znak=(char)'\n')){
+        znak <- readchar();
+        pole[counter][i] <-(char)znak;
+        i <- i+1;
+    }
+    int newcounter;
+    newcounter <- counter;
+    while (newcounter>0){
+        i <- 0;
+        while (pole[newcounter][i]=(char)pole[newcounter-1][i]){
+            i <- i + 1;
+        }
+        if (pole[newcounter][i]<(char)pole[newcounter-1][i]){
+            char docasne[100];
+            int j;
+            j <- 0;
+            while (j < 100){
+                docasne[j] <- (char)pole[newcounter][j];
+                pole[newcounter][j] <- (char)pole[newcounter-1][j];
+                pole[newcounter-1][j] <- (char)docasne[j];
+                j <- j + 1;
+            }
+            newcounter <- newcounter - 1; 
+        } else {
+            newcounter <- 0; $pokiaľ je to utriedené, tak už nebudeme zbytočne pokračovať v cykle
+            i <- 100;
+        }
+    }
+    counter <- counter+1;
+}
+
+
+counter <- 0;
+while (counter<n){
+    i <- 0;
+    while (i < 100 and !(pole[counter][i]=(char)'\n')){
+        writechar(pole[counter][i]);
+        i <- i + 1;
+    }
+    writechar('\n');
+    counter <- counter + 1;
+}
